@@ -44,13 +44,6 @@
   become: yes
   notify: restart_jenkins
 
-# this is unfortunately necessary as we need to rely on a running jenkins instance, this won't interfere though with already setup systems...
-#- name: launch jenkins
-#  service:
-#    name: jenkins
-#    state: started
-#  become: yes
-
 - name: waitfor jenkins
   wait_for:
     port: 8080
@@ -76,12 +69,3 @@
     dest: /usr/local/bin/jenkins-cli
     mode: 'a+x'
   become: yes
-
-# cat /var/lib/jenkins/secrets/initialAdminPassword
-# 
-
-
-# 2) make admin user predictable
-
-
-# 3) install plugins via jenkins-cli

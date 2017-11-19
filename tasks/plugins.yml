@@ -1,3 +1,19 @@
 ---
 
+#- name: install plugins
+#  command: jenkins-cli install-plugin "{{ item }}"
+#  args:
+#    creates: /var/lib/jenkins/plugins/{{ item }}.jpi
+#  with_items: "{{ jenkins_plugins }}"
 
+- name: install plugins
+  jenkins_plugin:
+    name: "{{ item }}"
+    state: latest
+    params:
+      url_username: "{{ jenkins_admin_username }}"
+    url_password: "{{ jenkins_admin_password }}"
+    url: http://{{ jenkins_http_listen_address }}:8080
+  with_items: "{{ jenkins_plugins }}"
+  become: yes
+  notify: restart_jenkins

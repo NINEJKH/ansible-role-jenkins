@@ -12,6 +12,9 @@
 
 - import_tasks: security.yml
 
+- import_tasks: plugins.yml
+  when: jenkins_plugins | length > 0
+
 - name: check if munin-node is installed
   command: dpkg -L munin-node
   register: jenkins_munin_node_check

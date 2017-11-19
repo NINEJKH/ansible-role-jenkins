@@ -73,3 +73,5 @@ ansible-playbook \
   --extra-vars="role_root=${role_root}" \
   --connection="${CONNECTION}" \
   tests/test.yml
+
+curl -sSI "http://${TARGET_HOST}:8080"

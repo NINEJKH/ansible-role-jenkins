@@ -28,6 +28,8 @@ jenkins_admin_username: admin
 jenkins_admin_password: admin
 
 jenkins_num_executors: 0
+
+jenkins_plugins: []
 ```
 
 ## Dependencies
