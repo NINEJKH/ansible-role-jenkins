@@ -5,5 +5,9 @@
   vars:
     jenkins_http_listen_address: 0.0.0.0
 
+    jenkins_plugins:
+      - git
+      - mercurial
+
   roles:
     - { role: "{{ role_root | default('../ansible-role-wildfly') }}" }
