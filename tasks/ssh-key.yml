@@ -1,0 +1,12 @@
+---
+
+- name: copy over ssh-key
+  copy:
+    src: "{{ item }}"
+    dest: ~/.ssh/{{ item }}
+    mode: 0600
+  with_items:
+    - id_rsa
+    - id_rsa.pub
+  become: yes
+  become_user: jenkins

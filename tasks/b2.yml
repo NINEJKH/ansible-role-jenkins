@@ -1,0 +1,7 @@
+---
+
+- name: install b2
+  pip:
+    name: b2
+    state: latest
+  become: yes

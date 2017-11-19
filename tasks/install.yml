@@ -1,0 +1,74 @@
+---
+
+- name: add apt-key
+  apt_key:
+    url: "https://pkg.jenkins.io/debian/jenkins-ci.org.key"
+    state: present
+  become: yes
+
+- name: add repository
+  apt_repository:
+    repo: "deb http://pkg.jenkins.io/debian-stable binary/"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: install jenkins
+  apt:
+    name: jenkins
+    state: latest
+  become: yes
+
+- name: generate dhparam
+  command: openssl dhparam -out /etc/nginx/dhparam.pem 4096
+  args:
+    creates: /etc/nginx/dhparam.pem
+  become: yes
+
+- stat:
+    path: /etc/letsencrypt/live/{{ jenkins_fqdn }}/fullchain.pem
+  register: jenkins_lecert
+  become: yes
+
+- name: add vhost
+  template:
+    src: vhost.conf
+    dest: /etc/nginx/vhosts/jenkins.conf
+    mode: 0644
+  become: yes
+  notify: restart_nginx
+
+- cron:
+    cron_file: letsencrypt
+    user: root
+    name: MAILTO
+    env: yes
+    value: hostmaster@weheartwebsites.de
+  become: yes
+
+- cron:
+    cron_file: letsencrypt
+    user: root
+    name: MAILFROM
+    env: yes
+    value: "{{ ansible_hostname }}@weheartwebsites.de"
+  become: yes
+
+- name: add cronjob
+  cron:
+    cron_file: letsencrypt
+    user: root
+    name: "lecert {{ jenkins_fqdn }}"
+    minute: 22
+    hour: 2
+    day: 2
+    job: "certbot certonly -n -m 'hostmaster@weheartwebsites.de' --agree-tos -q --renew-by-default --webroot -w /var/lib/jenkins/ -d {{ jenkins_fqdn }} && systemctl reload nginx"
+  become: yes
+
+- name: bind to localhost
+  lineinfile:
+    path: /etc/default/jenkins
+    regexp: '^JENKINS_ARGS='
+    line: 'JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1"'
+  become: yes
+  notify: restart_jenkins
