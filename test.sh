@@ -66,10 +66,10 @@ ansible-playbook \
   --connection="${CONNECTION}" \
   tests/test.yml
 
-#consolelog "running role as playbook #2"
-#ansible-playbook \
-#  --inventory="${TARGET_HOST}," \
-#  --user="${CONNECT_USER}" \
-#  --extra-vars="role_root=${role_root}" \
-#  --connection="${CONNECTION}" \
-#  tests/test.yml
+consolelog "running role as playbook #2"
+ansible-playbook \
+  --inventory="${TARGET_HOST}," \
+  --user="${CONNECT_USER}" \
+  --extra-vars="role_root=${role_root}" \
+  --connection="${CONNECTION}" \
+  tests/test.yml
