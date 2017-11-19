@@ -17,7 +17,7 @@
     dest: /usr/share/munin/plugins
     mode: 'a+x'
   become: yes
-  notify: jenkins_restart_munin_node
+  notify: restart_munin_node
 
 - name: enable plugins
   file:
@@ -28,7 +28,7 @@
     - jenkins_queue
     - jenkins_running
   become: yes
-  notify: jenkins_restart_munin_node
+  notify: restart_munin_node
 
 - name: add munin plugin-conf
   template:
@@ -36,4 +36,4 @@
     dest: /etc/munin/plugin-conf.d/jenkins
     mode: 0644
   become: yes
-  notify: jenkins_restart_munin_node
+  notify: restart_munin_node

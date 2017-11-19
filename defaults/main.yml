@@ -1,0 +1,11 @@
+---
+
+jenkins_http_listen_address: 127.0.0.1
+
+jenkins_memory_max: 256m
+
+jenkins_admin_username: admin
+
+jenkins_admin_password: admin
+
+jenkins_num_executors: 0

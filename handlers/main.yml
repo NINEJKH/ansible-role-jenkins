@@ -4,9 +4,10 @@
   service:
     name: jenkins
     state: restarted
+    enabled: yes
   become: yes
 
-- name: jenkins_restart_munin_node
+- name: restart_munin_node
   service:
     name: munin-node
     state: restarted
