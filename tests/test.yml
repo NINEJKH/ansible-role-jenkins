@@ -2,5 +2,8 @@
 
 - hosts: all
 
+  vars:
+    jenkins_http_listen_address: 0.0.0.0
+
   roles:
     - { role: "{{ role_root | default('../ansible-role-wildfly') }}" }

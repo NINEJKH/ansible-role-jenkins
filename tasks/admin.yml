@@ -1,0 +1,37 @@
+---
+
+- name: create groovy startup scripts folder
+  file:
+    state: directory
+    path: /var/lib/jenkins/init.groovy.d
+    mode: 0755
+  become_user: jenkins
+  become: yes
+
+- name: add basic-security.groovy
+  template:
+    src: basic-security.groovy
+    dest: /var/lib/jenkins/init.groovy.d/basic-security.groovy
+    mode: 0644
+  become_user: jenkins
+  become: yes
+
+- name: restart jenkins
+  service:
+    name: jenkins
+    state: restarted
+  become: yes
+
+- name: wait_for jenkins
+  shell: "curl -D - --silent --max-time 5 http://{{ jenkins_http_listen_address }}:8080/cli/"
+  register: result
+  until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+  retries: 60
+  delay: 5
+
+- name: cleanup
+  file:
+    state: absent
+    path: /var/lib/jenkins/init.groovy.d/basic-security.groovy
+  become_user: jenkins
+  become: yes

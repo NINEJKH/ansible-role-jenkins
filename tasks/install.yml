@@ -19,56 +19,69 @@
     state: latest
   become: yes
 
-- name: generate dhparam
-  command: openssl dhparam -out /etc/nginx/dhparam.pem 4096
-  args:
-    creates: /etc/nginx/dhparam.pem
+- name: install required tools & libs
+  apt:
+    name: "{{ item }}"
+    state: present
+  with_items:
+    - curl
+    - python-lxml
   become: yes
 
-- stat:
-    path: /etc/letsencrypt/live/{{ jenkins_fqdn }}/fullchain.pem
-  register: jenkins_lecert
-  become: yes
-
-- name: add vhost
-  template:
-    src: vhost.conf
-    dest: /etc/nginx/vhosts/jenkins.conf
-    mode: 0644
-  become: yes
-  notify: restart_nginx
-
-- cron:
-    cron_file: letsencrypt
-    user: root
-    name: MAILTO
-    env: yes
-    value: hostmaster@weheartwebsites.de
-  become: yes
-
-- cron:
-    cron_file: letsencrypt
-    user: root
-    name: MAILFROM
-    env: yes
-    value: "{{ ansible_hostname }}@weheartwebsites.de"
-  become: yes
-
-- name: add cronjob
-  cron:
-    cron_file: letsencrypt
-    user: root
-    name: "lecert {{ jenkins_fqdn }}"
-    minute: 22
-    hour: 2
-    day: 2
-    job: "certbot certonly -n -m 'hostmaster@weheartwebsites.de' --agree-tos -q --renew-by-default --webroot -w /var/lib/jenkins/ -d {{ jenkins_fqdn }} && systemctl reload nginx"
-  become: yes
-
-- name: bind to localhost
+- name: set JENKINS_ARGS
   lineinfile:
     path: /etc/default/jenkins
     regexp: '^JENKINS_ARGS='
-    line: 'JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress=127.0.0.1"'
+    line: 'JENKINS_ARGS="--webroot=/var/cache/$NAME/war --httpPort=$HTTP_PORT --httpListenAddress={{ jenkins_http_listen_address }}"'
   become: yes
   notify: restart_jenkins
+
+- name: set JAVA_ARGS
+  lineinfile:
+    path: /etc/default/jenkins
+    regexp: '^JAVA_ARGS='
+    line: 'JAVA_ARGS="-Djava.awt.headless=true -Xms{{ jenkins_memory_max }} -Xmx{{ jenkins_memory_max }} -Djenkins.install.runSetupWizard=false"'
+  become: yes
+  notify: restart_jenkins
+
+# this is unfortunately necessary as we need to rely on a running jenkins instance, this won't interfere though with already setup systems...
+#- name: launch jenkins
+#  service:
+#    name: jenkins
+#    state: started
+#  become: yes
+
+- name: waitfor jenkins
+  wait_for:
+    port: 8080
+
+- name: create jenkins-cli folder
+  file:
+    state: directory
+    path: /opt/jenkins-cli
+    mode: 0755
+  become: yes
+
+- name: copy-over jenkins-cli
+  copy:
+    src: /var/cache/jenkins/war/WEB-INF/jenkins-cli.jar
+    dest: /opt/jenkins-cli/jenkins-cli.jar
+    remote_src: yes
+    mode: 0644
+  become: yes
+
+- name: create jenkins-cli shortcut
+  template:
+    src: jenkins-cli.sh
+    dest: /usr/local/bin/jenkins-cli
+    mode: 'a+x'
+  become: yes
+
+# cat /var/lib/jenkins/secrets/initialAdminPassword
+# 
+
+
+# 2) make admin user predictable
+
+
+# 3) install plugins via jenkins-cli

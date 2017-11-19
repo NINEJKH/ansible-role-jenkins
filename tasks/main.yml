@@ -1,17 +1,21 @@
 ---
 
-- include: install.yml
+- import_tasks: install.yml
 
-- include: known-hosts.yml
+- name: check if admin user is created or if password changed
+  command: jenkins-cli who-am-i
+  register: jenkins_user_anonmyous
+  ignore_errors: yes
 
-- include: ssh-key.yml
+- import_tasks: admin.yml
+  when: jenkins_user_anonmyous.rc != 0 or jenkins_user_anonmyous.stdout | search('anonymous')
 
-- include: b2.yml
+- import_tasks: security.yml
 
 - name: check if munin-node is installed
   command: dpkg -L munin-node
   register: jenkins_munin_node_check
   ignore_errors: yes
 
-- include: munin-plugin.yml
+- import_tasks: munin-plugin.yml
   when: jenkins_munin_node_check.rc == 0
