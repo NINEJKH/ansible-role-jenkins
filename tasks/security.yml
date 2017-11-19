@@ -5,7 +5,8 @@
     src: jenkins.CLI.xml
     dest: /var/lib/jenkins/jenkins.CLI.xml
     mode: 0644
-  become_user: jenkins
+    owner: jenkins
+    group: jenkins
   become: yes
   notify: restart_jenkins
 
@@ -14,7 +15,6 @@
     path: /var/lib/jenkins/config.xml
     xpath: /hudson/authorizationStrategy/denyAnonymousReadAccess
     value: 'true'
-  become_user: jenkins
   become: yes
   notify: restart_jenkins
 
@@ -23,7 +23,6 @@
     path: /var/lib/jenkins/config.xml
     xpath: /hudson/noUsageStatistics
     value: 'true'
-  become_user: jenkins
   become: yes
   notify: restart_jenkins
 
@@ -33,7 +32,8 @@
       false
     dest: /var/lib/jenkins/secrets/slave-to-master-security-kill-switch
     mode: 0644
-  become_user: jenkins
+    owner: jenkins
+    group: jenkins
   become: yes
   notify: restart_jenkins
 
@@ -42,6 +42,5 @@
     path: /var/lib/jenkins/config.xml
     xpath: /hudson/numExecutors
     value: '{{ jenkins_num_executors | string }}'
-  become_user: jenkins
   become: yes
   notify: restart_jenkins

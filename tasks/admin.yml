@@ -5,7 +5,8 @@
     state: directory
     path: /var/lib/jenkins/init.groovy.d
     mode: 0755
-  become_user: jenkins
+    owner: jenkins
+    group: jenkins
   become: yes
 
 - name: add basic-security.groovy
@@ -13,7 +14,8 @@
     src: basic-security.groovy
     dest: /var/lib/jenkins/init.groovy.d/basic-security.groovy
     mode: 0644
-  become_user: jenkins
+    owner: jenkins
+    group: jenkins
   become: yes
 
 - name: restart jenkins
@@ -33,5 +35,4 @@
   file:
     state: absent
     path: /var/lib/jenkins/init.groovy.d/basic-security.groovy
-  become_user: jenkins
   become: yes
