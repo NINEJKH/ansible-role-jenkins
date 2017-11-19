@@ -1,0 +1,13 @@
+---
+
+- name: restart_jenkins
+  service:
+    name: jenkins
+    state: restarted
+  become: yes
+
+- name: jenkins_restart_munin_node
+  service:
+    name: munin-node
+    state: restarted
+  become: yes

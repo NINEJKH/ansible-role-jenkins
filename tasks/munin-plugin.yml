@@ -1,0 +1,39 @@
+---
+
+- name: install dependencies
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+    cache_valid_time: 3600
+  with_items:
+    - libjson-perl
+    - libjson-xs-perl
+  become: yes
+
+- name: fetch munin-plugin
+  get_url:
+    url: https://raw.githubusercontent.com/munin-monitoring/contrib/master/plugins/jenkins/jenkins_
+    dest: /usr/share/munin/plugins
+    mode: 'a+x'
+  become: yes
+  notify: jenkins_restart_munin_node
+
+- name: enable plugins
+  file:
+    src: /usr/share/munin/plugins/jenkins_
+    dest: /etc/munin/plugins/{{ item }}
+    state: link
+  with_items:
+    - jenkins_queue
+    - jenkins_running
+  become: yes
+  notify: jenkins_restart_munin_node
+
+- name: add munin plugin-conf
+  template:
+    src: munin-plugin.conf
+    dest: /etc/munin/plugin-conf.d/jenkins
+    mode: 0644
+  become: yes
+  notify: jenkins_restart_munin_node
