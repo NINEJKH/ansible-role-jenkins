@@ -16,6 +16,7 @@
     url_password: "{{ jenkins_admin_password }}"
     url: http://{{ jenkins_http_listen_address }}:8080
     with_dependencies: yes
+    timeout: 300
   with_items: "{{ jenkins_plugins }}"
   become: yes
   notify: restart_jenkins
