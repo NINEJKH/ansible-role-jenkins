@@ -9,7 +9,8 @@
 - name: install plugins
   jenkins_plugin:
     name: "{{ item }}"
-    state: latest
+    # https://github.com/ansible/ansible/issues/24864
+    state: present
     params:
       url_username: "{{ jenkins_admin_username }}"
     url_password: "{{ jenkins_admin_password }}"
