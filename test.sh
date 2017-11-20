@@ -75,3 +75,5 @@ ansible-playbook \
   tests/test.yml
 
 curl -sSI "http://${TARGET_HOST}:8080"
+
+sudo ls -lh /var/lib/jenkins/plugins/

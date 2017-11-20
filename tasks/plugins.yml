@@ -9,11 +9,13 @@
 - name: install plugins
   jenkins_plugin:
     name: "{{ item }}"
-    state: latest
+    # https://github.com/ansible/ansible/issues/24864
+    state: present
     params:
       url_username: "{{ jenkins_admin_username }}"
     url_password: "{{ jenkins_admin_password }}"
     url: http://{{ jenkins_http_listen_address }}:8080
+    with_dependencies: yes
   with_items: "{{ jenkins_plugins }}"
   become: yes
   notify: restart_jenkins
