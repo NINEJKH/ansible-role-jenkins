@@ -9,13 +9,22 @@
   notify: restart_jenkins
   when: jenkins_slave_agent_port is defined
 
+- name: prepare unsecured agent protos
+  xml:
+    path: /var/lib/jenkins/config.xml
+    xpath: /hudson/disabledAgentProtocols
+  become: yes
+  notify: restart_jenkins
+  when: jenkins_slave_agent_port is defined
+
 - name: disable unsecured agent protos
   xml:
     path: /var/lib/jenkins/config.xml
     xpath: /hudson/disabledAgentProtocols
-    add_children:
+    set_children:
       - string: JNLP-connect
       - string: JNLP2-connect
+    pretty_print: yes
   become: yes
   notify: restart_jenkins
   when: jenkins_slave_agent_port is defined
