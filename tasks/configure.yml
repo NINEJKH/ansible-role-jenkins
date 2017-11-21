@@ -1,0 +1,21 @@
+---
+
+- name: set slaveAgentPort
+  xml:
+    path: /var/lib/jenkins/config.xml
+    xpath: /hudson/slaveAgentPort
+    value: "{{ jenkins_slave_agent_port }}"
+  become: yes
+  notify: restart_jenkins
+  when: jenkins_slave_agent_port is defined
+
+- name: disable unsecured agent protos
+  xml:
+    path: /var/lib/jenkins/config.xml
+    xpath: /hudson/disabledAgentProtocols
+    add_children:
+      - string: JNLP-connect
+      - string: JNLP2-connect
+  become: yes
+  notify: restart_jenkins
+  when: jenkins_slave_agent_port is defined

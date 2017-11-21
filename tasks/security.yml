@@ -44,3 +44,20 @@
     value: '{{ jenkins_num_executors | string }}'
   become: yes
   notify: restart_jenkins
+
+- name: enable csrf
+  xml:
+    path: /var/lib/jenkins/config.xml
+    xpath: /hudson/crumbIssuer
+    attribute: class
+    value: hudson.security.csrf.DefaultCrumbIssuer
+  become: yes
+  notify: restart_jenkins
+
+- name: exclude no IP from csrf
+  xml:
+    path: /var/lib/jenkins/config.xml
+    xpath: /hudson/crumbIssuer/excludeClientIPFromCrumb
+    value: 'false'
+  become: yes
+  notify: restart_jenkins

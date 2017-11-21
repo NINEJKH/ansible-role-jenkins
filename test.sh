@@ -74,6 +74,8 @@ ansible-playbook \
   --connection="${CONNECTION}" \
   tests/test.yml
 
-curl -sSI "http://${TARGET_HOST}:8080"
-
-sudo ls -lh /var/lib/jenkins/plugins/
+if [[ "${CONNECTION}" == "local" ]]; then
+  curl -sSI "http://${TARGET_HOST}:8080"
+  sudo ls -lh /var/lib/jenkins/plugins/
+  cat /var/lib/jenkins/config.xml
+fi
