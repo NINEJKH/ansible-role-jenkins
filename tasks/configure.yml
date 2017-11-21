@@ -4,7 +4,7 @@
   xml:
     path: /var/lib/jenkins/config.xml
     xpath: /hudson/slaveAgentPort
-    value: "{{ jenkins_slave_agent_port }}"
+    value: "{{ jenkins_slave_agent_port | string }}"
   become: yes
   notify: restart_jenkins
   when: jenkins_slave_agent_port is defined
