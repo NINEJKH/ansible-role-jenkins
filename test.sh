@@ -15,12 +15,13 @@ test role
 
     -h          display this help and exit
     -i STRING   target host to run against (default: 127.0.0.1)
+    -T          turbo mode
     -u STRING   connect as this user (default: current user)
 EOF
 }
 
 OPTIND=1
-while getopts "hi:u:" opt; do
+while getopts "hi:Tu:" opt; do
   case "${opt}" in
     h )
       usage
@@ -28,6 +29,9 @@ while getopts "hi:u:" opt; do
       ;;
     i )
       TARGET_HOST="${OPTARG}"
+      ;;
+    T )
+      TURBO_MODE=1
       ;;
     u )
       CONNECT_USER="${OPTARG}"
@@ -55,8 +59,10 @@ fi
 
 role_root="$(pwd)"
 
-consolelog "installing requirements"
-ansible-galaxy install lifeofguenter.oracle-java
+if [[ -z "${TURBO_MODE}" ]]; then
+  consolelog "installing requirements"
+  ansible-galaxy install lifeofguenter.oracle-java
+fi
 
 consolelog "running role as playbook #1"
 ansible-playbook \
@@ -66,14 +72,18 @@ ansible-playbook \
   --connection="${CONNECTION}" \
   tests/test.yml
 
-consolelog "running role as playbook #2"
-ansible-playbook \
-  --inventory="${TARGET_HOST}," \
-  --user="${CONNECT_USER}" \
-  --extra-vars="role_root=${role_root}" \
-  --connection="${CONNECTION}" \
-  tests/test.yml
+if [[ -z "${TURBO_MODE}" ]]; then
+  consolelog "running role as playbook #2"
+  ansible-playbook \
+    --inventory="${TARGET_HOST}," \
+    --user="${CONNECT_USER}" \
+    --extra-vars="role_root=${role_root}" \
+    --connection="${CONNECTION}" \
+    tests/test.yml
+fi
 
-curl -sSI "http://${TARGET_HOST}:8080"
-
-sudo ls -lh /var/lib/jenkins/plugins/
+if [[ "${CONNECTION}" == "local" ]]; then
+  curl -sSI "http://${TARGET_HOST}:8080"
+  sudo ls -lh /var/lib/jenkins/plugins/
+  cat /var/lib/jenkins/config.xml
+fi
