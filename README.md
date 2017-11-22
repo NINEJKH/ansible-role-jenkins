@@ -1,3 +1,6 @@
+# TODO: delete admin user if jenkins_admin_username != admin (https://stackoverflow.com/a/41255658/567193)
+
+
 [![Build Status](https://travis-ci.org/NINEJKH/ansible-role-jenkins.svg?branch=master)](https://travis-ci.org/NINEJKH/ansible-role-jenkins)
 
 # NINEJKH.jenkins
@@ -21,7 +24,9 @@ none
 ```yaml
 jenkins_http_listen_address: 127.0.0.1
 
-jenkins_memory_max: 256m
+jenkins_url: http://{{ jenkins_http_listen_address }}:8080
+
+jenkins_memory_max: "{{ (ansible_memtotal_mb * 0.5) | round | int }}m"
 
 jenkins_admin_username: admin
 
@@ -30,6 +35,8 @@ jenkins_admin_password: admin
 jenkins_num_executors: 0
 
 jenkins_plugins: []
+
+jenkins_slave_agent_port:
 ```
 
 ## Dependencies
