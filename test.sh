@@ -84,7 +84,12 @@ fi
 
 if [[ "${CONNECTION}" == "local" ]]; then
   curl -sSI "http://${TARGET_HOST}:8080"
+  echo ""
   sudo ls -lh /var/lib/jenkins/plugins/
+  echo ""
   cat /var/lib/jenkins/config.xml
+  echo ""
+  jenkins-cli
+  echo ""
   jenkins-cli who-am-i
 fi

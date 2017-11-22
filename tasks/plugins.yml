@@ -20,4 +20,21 @@
     timeout: 600
   with_items: "{{ jenkins_plugins }}"
   become: yes
-  notify: restart_jenkins
+  register: jenkins_install_plugins
+
+# remember: we need to restart jenkins right-away, else the plugins might potentially not be
+# available via jenkins-cli prior
+- name: restart jenkins
+  service:
+    name: jenkins
+    state: restarted
+  become: yes
+  when: jenkins_install_plugins | changed
+
+- name: wait_for jenkins
+  shell: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
+  register: result
+  until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
+  retries: 60
+  delay: 5
+  when: jenkins_install_plugins | changed
