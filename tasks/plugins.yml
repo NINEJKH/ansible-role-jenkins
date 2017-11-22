@@ -14,9 +14,10 @@
     params:
       url_username: "{{ jenkins_admin_username }}"
     url_password: "{{ jenkins_admin_password }}"
-    url: http://{{ jenkins_http_listen_address }}:8080
+    url: "{{ jenkins_url }}"
     with_dependencies: yes
-    timeout: 300
+    # seems to be an overall timeout, not a read-timeout
+    timeout: 600
   with_items: "{{ jenkins_plugins }}"
   become: yes
   notify: restart_jenkins

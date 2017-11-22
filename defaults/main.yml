@@ -2,6 +2,8 @@
 
 jenkins_http_listen_address: 127.0.0.1
 
+jenkins_url: http://{{ jenkins_http_listen_address }}:8080
+
 jenkins_memory_max: "{{ (ansible_memtotal_mb * 0.5) | round | int }}m"
 
 jenkins_admin_username: admin

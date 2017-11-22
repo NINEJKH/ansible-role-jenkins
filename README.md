@@ -12,6 +12,10 @@ It is recommended to run it on localhost and have a webserver (nginx) run in fro
 $ ./test.sh -i 192.168.1.159 -u vbox
 ```
 
+## Todos
+
+* delete admin user if jenkins_admin_username != admin (https://stackoverflow.com/a/41255658/567193)
+
 ## Requirements
 
 none
@@ -21,7 +25,9 @@ none
 ```yaml
 jenkins_http_listen_address: 127.0.0.1
 
-jenkins_memory_max: 256m
+jenkins_url: http://{{ jenkins_http_listen_address }}:8080
+
+jenkins_memory_max: "{{ (ansible_memtotal_mb * 0.5) | round | int }}m"
 
 jenkins_admin_username: admin
 
@@ -30,6 +36,8 @@ jenkins_admin_password: admin
 jenkins_num_executors: 0
 
 jenkins_plugins: []
+
+jenkins_slave_agent_port:
 ```
 
 ## Dependencies
