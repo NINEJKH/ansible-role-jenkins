@@ -1,6 +1,3 @@
-# TODO: delete admin user if jenkins_admin_username != admin (https://stackoverflow.com/a/41255658/567193)
-
-
 [![Build Status](https://travis-ci.org/NINEJKH/ansible-role-jenkins.svg?branch=master)](https://travis-ci.org/NINEJKH/ansible-role-jenkins)
 
 # NINEJKH.jenkins
@@ -14,6 +11,10 @@ It is recommended to run it on localhost and have a webserver (nginx) run in fro
 ```bash
 $ ./test.sh -i 192.168.1.159 -u vbox
 ```
+
+## Todos
+
+* delete admin user if jenkins_admin_username != admin (https://stackoverflow.com/a/41255658/567193)
 
 ## Requirements
 
