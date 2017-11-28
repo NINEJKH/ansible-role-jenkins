@@ -28,14 +28,6 @@
     mode: 0755
   become: yes
 
-- name: create tmpfiles.d
-  copy:
-    dest: /etc/tmpfiles.d/jenkins.conf
-    content: |
-      D /run/jenkins 0755 jenkins root
-    mode: 0644
-  become: yes
-
 - name: install required tools & libs
   apt:
     name: "{{ item }}"
