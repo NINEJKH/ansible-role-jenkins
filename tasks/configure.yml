@@ -24,6 +24,7 @@
     set_children:
       - string: JNLP-connect
       - string: JNLP2-connect
+      - string: JNLP3-connect
     pretty_print: yes
   become: yes
   notify: restart_jenkins
