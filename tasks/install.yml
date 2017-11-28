@@ -19,6 +19,15 @@
     state: latest
   become: yes
 
+- name: create /run/jenkins
+  file:
+    state: directory
+    path: /run/jenkins/
+    owner: jenkins
+    group: root
+    mode: 0755
+  become: yes
+
 - name: install required tools & libs
   apt:
     name: "{{ item }}"
