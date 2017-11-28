@@ -28,6 +28,16 @@
     mode: 0755
   become: yes
 
+- name: remove ulimit
+  replace:
+    path: /etc/default/jenkins
+    regex: ^MAXOPENFILES=.*$
+  become: yes
+  register: jenkins_ulimit_action
+  when:
+    - ansible_virtualization_type is defined
+    - ansible_virtualization_type in jenkins_ulimit_blacklist
+
 - name: install required tools & libs
   apt:
     name: "{{ item }}"
@@ -52,6 +62,13 @@
     line: 'JAVA_ARGS="-Djava.awt.headless=true -Xms{{ jenkins_memory_max }} -Xmx{{ jenkins_memory_max }} -Djenkins.install.runSetupWizard=false"'
   become: yes
   notify: restart_jenkins
+
+- name: restart jenkins
+  service:
+    name: jenkins
+    state: restarted
+  become: yes
+  when: jenkins_ulimit_action | changed
 
 - name: waitfor jenkins
   wait_for:
