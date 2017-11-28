@@ -31,7 +31,7 @@
 - name: remove ulimit
   replace:
     path: /etc/default/jenkins
-    regex: ^MAXOPENFILES=.*$
+    regexp: ^MAXOPENFILES=.*$
   become: yes
   register: jenkins_ulimit_action
   when:
