@@ -20,11 +20,18 @@
   become: yes
 
 # https://github.com/jenkinsci/packaging/pull/106
-- name: patch init.d
+- name: "patch init.d #1"
   replace:
     path: /etc/init.d/jenkins
     regexp: "{{ 'killall -u $JENKINS_USER java daemon || return 3' | regex_escape() }}"
     replace: "pkill -u \"${$JENKINS_USER}\" -f 'jenkins.war' || return 3"
+  become: yes
+
+- name: "patch init.d #2"
+  replace:
+    path: /etc/init.d/jenkins
+    regexp: "{{ 'return `ps -U $JENKINS_USER --no-headers -f | egrep -e '(java)' | grep -v defunct | grep -c . `' | regex_escape() }}"
+    replace: "return `ps -U $JENKINS_USER --no-headers -f | egrep -e '(java)' | egrep -e '(jenkins\\.war)' | grep -v defunct | grep -c . `"
   become: yes
 
 - name: create /run/jenkins

@@ -94,4 +94,6 @@ if [[ "${CONNECTION}" == "local" ]]; then
   jenkins-cli who-am-i
   echo ""
   grep -F pkill /etc/init.d/jenkins
+  echo ""
+  grep -F 'return `ps -U $JENKINS_USER' /etc/init.d/jenkins
 fi
