@@ -2,3 +2,7 @@
 
 jenkins_ulimit_blacklist:
   - docker
+
+jenkins_initd_patch_1: killall -u $JENKINS_USER java daemon || return 3
+
+jenkins_initd_patch_2: return `ps -U $JENKINS_USER --no-headers -f | egrep -e '(java)' | grep -v defunct | grep -c . `

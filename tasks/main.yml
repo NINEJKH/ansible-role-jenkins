@@ -1,11 +1,11 @@
 ---
 
-- import_tasks: install.yml
-
 - name: check for systemd
   command: dpkg -L systemd
   register: jenkins_systemd_check
   ignore_errors: yes
+
+- import_tasks: install.yml
 
 - import_tasks: systemd.yml
   when: jenkins_systemd_check | succeeded

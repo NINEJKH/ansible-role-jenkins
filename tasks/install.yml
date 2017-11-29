@@ -23,15 +23,17 @@
 - name: "patch init.d #1"
   replace:
     path: /etc/init.d/jenkins
-    regexp: "{{ 'killall -u $JENKINS_USER java daemon || return 3' | regex_escape() }}"
+    regexp: "{{ jenkins_initd_patch_1 | regex_escape() }}"
     replace: "pkill -u \"${$JENKINS_USER}\" -f 'jenkins.war' || return 3"
+  register: jenkins_initd_patched_1
   become: yes
 
 - name: "patch init.d #2"
   replace:
     path: /etc/init.d/jenkins
-    regexp: "{{ 'return `ps -U $JENKINS_USER --no-headers -f | egrep -e \'(java)\' | grep -v defunct | grep -c . `' | regex_escape() }}"
+    regexp: "{{ jenkins_initd_patch_2 | regex_escape() }}"
     replace: "return `ps -U $JENKINS_USER --no-headers -f | egrep -e '(java)' | egrep -e '(jenkins\\.war)' | grep -v defunct | grep -c . `"
+  register: jenkins_initd_patched_2
   become: yes
 
 - name: create /run/jenkins
@@ -78,12 +80,19 @@
   become: yes
   notify: restart_jenkins
 
+- name: systemd daemon-reload
+  command: systemctl daemon-reload
+  become: yes
+  when:
+    - jenkins_systemd_check | succeeded
+    - jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed
+
 - name: restart jenkins
   service:
     name: jenkins
     state: restarted
   become: yes
-  when: jenkins_ulimit_action | changed
+  when: jenkins_ulimit_action | changed or jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed
 
 - name: waitfor jenkins
   wait_for:
