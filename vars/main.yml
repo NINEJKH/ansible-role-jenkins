@@ -6,3 +6,5 @@ jenkins_ulimit_blacklist:
 jenkins_initd_patch_1: killall -u $JENKINS_USER java daemon || return 3
 
 jenkins_initd_patch_2: return `ps -U $JENKINS_USER --no-headers -f | egrep -e '(java)' | grep -v defunct | grep -c . `
+
+jenkins_initd_patch_3: for n in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do\n\s*sleep .*
