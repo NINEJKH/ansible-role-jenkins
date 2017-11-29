@@ -23,8 +23,8 @@
 - name: patch init.d
   replace:
     path: /etc/init.d/jenkins
-    regexp: killall -u $JENKINS_USER java daemon || return 3
-    replace: pkill -u "${$JENKINS_USER}" -f 'jenkins.war' || return 3
+    regexp: "{{ 'killall -u $JENKINS_USER java daemon || return 3' | regex_escape() }}"
+    replace: "pkill -u \"${$JENKINS_USER}\" -f 'jenkins.war' || return 3"
   become: yes
 
 - name: create /run/jenkins
