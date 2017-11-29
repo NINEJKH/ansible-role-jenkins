@@ -30,7 +30,7 @@
 - name: "patch init.d #2"
   replace:
     path: /etc/init.d/jenkins
-    regexp: "{{ 'return `ps -U $JENKINS_USER --no-headers -f | egrep -e '(java)' | grep -v defunct | grep -c . `' | regex_escape() }}"
+    regexp: "{{ 'return `ps -U $JENKINS_USER --no-headers -f | egrep -e \'(java)\' | grep -v defunct | grep -c . `' | regex_escape() }}"
     replace: "return `ps -U $JENKINS_USER --no-headers -f | egrep -e '(java)' | egrep -e '(jenkins\\.war)' | grep -v defunct | grep -c . `"
   become: yes
 
