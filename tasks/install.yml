@@ -24,7 +24,7 @@
   replace:
     path: /etc/init.d/jenkins
     regexp: "{{ jenkins_initd_patch_1 | regex_escape() }}"
-    replace: "pkill -u \"${$JENKINS_USER}\" -f 'jenkins.war' || return 3"
+    replace: "pkill -u \"${JENKINS_USER}\" -f 'jenkins.war' || return 3"
   register: jenkins_initd_patched_1
   become: yes
 
@@ -34,6 +34,14 @@
     regexp: "{{ jenkins_initd_patch_2 | regex_escape() }}"
     replace: "return `ps -U $JENKINS_USER --no-headers -f | egrep -e '(java)' | egrep -e '(jenkins\\.war)' | grep -v defunct | grep -c . `"
   register: jenkins_initd_patched_2
+  become: yes
+
+- name: "patch init.d #3"
+  replace:
+    path: /etc/init.d/jenkins
+    regexp: "{{ jenkins_initd_patch_3 }}"
+    replace: "for n in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do\n            sleep 30"
+  register: jenkins_initd_patched_3
   become: yes
 
 - name: create /run/jenkins
@@ -85,14 +93,14 @@
   become: yes
   when:
     - jenkins_systemd_check | succeeded
-    - jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed
+    - jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed or jenkins_initd_patched_3 | changed
 
 - name: restart jenkins
   service:
     name: jenkins
     state: restarted
   become: yes
-  when: jenkins_ulimit_action | changed or jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed
+  when: jenkins_ulimit_action | changed or jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed or jenkins_initd_patched_3 | changed
 
 - name: waitfor jenkins
   wait_for:
