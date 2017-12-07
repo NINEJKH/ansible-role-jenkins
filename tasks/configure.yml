@@ -4,10 +4,10 @@
   xml:
     path: /var/lib/jenkins/config.xml
     xpath: /hudson/slaveAgentPort
-    value: "{{ jenkins_slave_agent_port | string }}"
+    value: "{{ jenkins_agent_port | string }}"
   become: yes
   notify: restart_jenkins
-  when: jenkins_slave_agent_port is defined
+  when: jenkins_agent_port is defined
 
 - name: prepare unsecured agent protos
   xml:
@@ -15,7 +15,7 @@
     xpath: /hudson/disabledAgentProtocols
   become: yes
   notify: restart_jenkins
-  when: jenkins_slave_agent_port is defined
+  when: jenkins_agent_port is defined
 
 - name: disable unsecured agent protos
   xml:
@@ -28,4 +28,4 @@
     pretty_print: yes
   become: yes
   notify: restart_jenkins
-  when: jenkins_slave_agent_port is defined
+  when: jenkins_agent_port is defined

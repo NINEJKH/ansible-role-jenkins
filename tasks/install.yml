@@ -40,7 +40,7 @@
   replace:
     path: /etc/init.d/jenkins
     regexp: "{{ jenkins_initd_patch_3 }}"
-    replace: "for n in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do\n            sleep 30"
+    replace: "for n in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20; do\n            sleep 15"
   register: jenkins_initd_patched_3
   become: yes
 
@@ -84,7 +84,7 @@
   lineinfile:
     path: /etc/default/jenkins
     regexp: '^JAVA_ARGS='
-    line: 'JAVA_ARGS="-Djava.awt.headless=true -Xms{{ jenkins_memory_max }} -Xmx{{ jenkins_memory_max }} -Djenkins.install.runSetupWizard=false"'
+    line: 'JAVA_ARGS="{{ jenkins_java_args | join(" ") }}"'
   become: yes
   notify: restart_jenkins
 
