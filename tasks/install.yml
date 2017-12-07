@@ -84,7 +84,7 @@
   lineinfile:
     path: /etc/default/jenkins
     regexp: '^JAVA_ARGS='
-    line: 'JAVA_ARGS="{{ jenkins_java_args | join(' ') }}'
+    line: 'JAVA_ARGS="{{ jenkins_java_args | join(" ") }}'
   become: yes
   notify: restart_jenkins
 
