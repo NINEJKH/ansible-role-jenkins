@@ -37,7 +37,7 @@ jenkins_num_executors: 0
 
 jenkins_plugins: []
 
-jenkins_slave_agent_port:
+jenkins_agent_port:
 ```
 
 ## Dependencies
