@@ -2,7 +2,7 @@
 
 # NINEJKH.jenkins
 
-An Ansible role that installs Jenkins (LTS) on Debian-like systems.
+An (opinionated) Ansible role that installs Jenkins (LTS) on Debian-like systems.
 
 It is recommended to run it on localhost and have a webserver (nginx) run in front of it, which configuration is not part of this role.
 
@@ -38,6 +38,21 @@ jenkins_num_executors: 0
 jenkins_plugins: []
 
 jenkins_agent_port:
+
+jenkins_java_args:
+  - -server
+  - -Djava.awt.headless=true
+  - -Xms{{ jenkins_memory_max }}
+  - -Xmx{{ jenkins_memory_max }}
+  - -Djenkins.install.runSetupWizard=false
+  # https://www.cloudbees.com/blog/joining-big-leagues-tuning-jenkins-gc-responsiveness-and-stability
+  - -XX:+AlwaysPreTouch
+  - -XX:+UseG1GC
+  - -XX:+ExplicitGCInvokesConcurrent
+  - -XX:+ParallelRefProcEnabled
+  - -XX:+UseStringDeduplication
+  - -XX:+UnlockDiagnosticVMOptions
+  - -XX:G1SummarizeRSetStatsPeriod=1
 ```
 
 ## Dependencies
