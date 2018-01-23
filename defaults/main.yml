@@ -4,7 +4,7 @@ jenkins_http_listen_address: 127.0.0.1
 
 jenkins_url: http://{{ jenkins_http_listen_address }}:8080
 
-jenkins_memory_max: "{{ (ansible_memtotal_mb * 0.5) | round | int }}m"
+jenkins_memory_max: "{{ (ansible_memtotal_mb * 0.4) | round | int }}m"
 
 jenkins_admin_username: admin
 
@@ -28,3 +28,8 @@ jenkins_java_args:
   - -XX:+UseStringDeduplication
   - -XX:+UnlockDiagnosticVMOptions
   - -XX:G1SummarizeRSetStatsPeriod=1
+  # https://groups.google.com/d/msg/jenkinsci-dev/SYerQ-8E-10/0gAt-nZyPzIJ
+  - -Dhudson.model.LoadStatistics.clock=3000
+  - -Dhudson.model.LoadStatistics.decay=0.7
+  - -Dhudson.slaves.NodeProvisioner.MARGIN=30
+  - -Dhudson.slaves.NodeProvisioner.MARGIN0=0.6
