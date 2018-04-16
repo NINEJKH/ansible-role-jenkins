@@ -10,7 +10,7 @@
   jenkins_plugin:
     name: "{{ item }}"
     # https://github.com/ansible/ansible/issues/24864
-    state: present
+    state: latest
     url_username: "{{ jenkins_admin_username }}"
     url_password: "{{ jenkins_admin_password }}"
     url: "{{ jenkins_url }}"
@@ -30,10 +30,13 @@
   become: yes
   when: jenkins_install_plugins is changed
 
-- name: wait_for jenkins
-  shell: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
-  register: result
-  until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
-  retries: 60
-  delay: 5
+- name: waitfor jenkins 
+  uri:
+    url: "{{ jenkins_url }}"
+    status_code: "200,403"
+  register: waitfor_jenkins
+  until: waitfor_jenkins is success
+  retries: 300
+  delay: 1
+  changed_when: false
   when: jenkins_install_plugins is changed
