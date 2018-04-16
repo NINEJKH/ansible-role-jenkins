@@ -8,7 +8,7 @@
 - import_tasks: install.yml
 
 - import_tasks: systemd.yml
-  when: jenkins_systemd_check | succeeded
+  when: jenkins_systemd_check is succeeded
 
 - name: check if admin user is created or if password changed
   command: jenkins-cli who-am-i
@@ -31,4 +31,4 @@
   ignore_errors: yes
 
 - import_tasks: munin-plugin.yml
-  when: jenkins_munin_node_check | succeeded
+  when: jenkins_munin_node_check is succeeded

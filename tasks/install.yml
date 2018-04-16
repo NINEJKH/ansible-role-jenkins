@@ -92,19 +92,23 @@
   command: systemctl daemon-reload
   become: yes
   when:
-    - jenkins_systemd_check | succeeded
-    - jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed or jenkins_initd_patched_3 | changed
+    - jenkins_systemd_check is succeeded
+    - jenkins_initd_patched_1 is changed or jenkins_initd_patched_2 is changed or jenkins_initd_patched_3 is changed
 
 - name: restart jenkins
   service:
     name: jenkins
     state: restarted
   become: yes
-  when: jenkins_ulimit_action | changed or jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed or jenkins_initd_patched_3 | changed
+  when: jenkins_ulimit_action is changed or jenkins_initd_patched_1 is changed or jenkins_initd_patched_2 is changed or jenkins_initd_patched_3 is changed
 
-- name: waitfor jenkins
-  wait_for:
-    port: 8080
+- name: waitfor jenkins 
+  command: curl -s -o /dev/null -w "%{http_code}" {{ jenkins_url }}
+  register: result
+  until: result.stdout == "403" or result.stdout == "200"
+  retries: 300
+  delay: 1
+  changed_when: false
 
 - name: create jenkins-cli folder
   file:
