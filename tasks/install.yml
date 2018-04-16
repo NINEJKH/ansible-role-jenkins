@@ -127,3 +127,16 @@
     dest: /usr/local/bin/jenkins-cli
     mode: 'a+x'
   become: yes
+
+# https://github.com/geerlingguy/ansible-role-jenkins/issues/181
+- name: fix a defect to disable setup wizard
+  jenkins_script:
+    script: |
+      import static jenkins.model.Jenkins.instance as jenkins
+      import jenkins.install.InstallState
+      if (!jenkins.installState.isSetupComplete()) {
+        InstallState.INITIAL_SETUP_COMPLETED.initializeState()
+      }
+    url: "{{ jenkins_url }}"
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_password }}"
