@@ -8,7 +8,7 @@
 - import_tasks: install.yml
 
 - import_tasks: systemd.yml
-  when: jenkins_systemd_check | succeeded
+  when: jenkins_systemd_check is succeeded
 
 - name: check if admin user is created or if password changed
   command: jenkins-cli who-am-i
@@ -16,7 +16,7 @@
   ignore_errors: yes
 
 - import_tasks: admin.yml
-  when: jenkins_user_anonmyous.rc != 0 or jenkins_user_anonmyous.stdout | search('anonymous')
+  when: jenkins_user_anonmyous.rc != 0 or jenkins_user_anonmyous.stdout is search('anonymous')
 
 - import_tasks: security.yml
 
@@ -31,4 +31,4 @@
   ignore_errors: yes
 
 - import_tasks: munin-plugin.yml
-  when: jenkins_munin_node_check | succeeded
+  when: jenkins_munin_node_check is succeeded

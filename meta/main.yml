@@ -5,7 +5,7 @@ galaxy_info:
   description: Installs Jenkins on Debian-like systems.
   company: 9JKH (Pty) Ltd.
   license: MIT
-  min_ansible_version: 2.4
+  min_ansible_version: 2.5
   platforms:
     - name: Ubuntu
       versions:
@@ -20,4 +20,4 @@ galaxy_info:
     - development
 dependencies:
   - src: lifeofguenter.oracle-java
-    version: 0.6.0
+    version: 0.6.1

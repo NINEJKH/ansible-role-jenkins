@@ -92,19 +92,25 @@
   command: systemctl daemon-reload
   become: yes
   when:
-    - jenkins_systemd_check | succeeded
-    - jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed or jenkins_initd_patched_3 | changed
+    - jenkins_systemd_check is succeeded
+    - jenkins_initd_patched_1 is changed or jenkins_initd_patched_2 is changed or jenkins_initd_patched_3 is changed
 
 - name: restart jenkins
   service:
     name: jenkins
     state: restarted
   become: yes
-  when: jenkins_ulimit_action | changed or jenkins_initd_patched_1 | changed or jenkins_initd_patched_2 | changed or jenkins_initd_patched_3 | changed
+  when: jenkins_ulimit_action is changed or jenkins_initd_patched_1 is changed or jenkins_initd_patched_2 is changed or jenkins_initd_patched_3 is changed
 
-- name: waitfor jenkins
-  wait_for:
-    port: 8080
+- name: waitfor jenkins 
+  uri:
+    url: "{{ jenkins_url }}"
+    status_code: "200,403"
+  register: waitfor_jenkins
+  until: waitfor_jenkins is success
+  retries: 300
+  delay: 1
+  changed_when: false
 
 - name: create jenkins-cli folder
   file:
@@ -127,3 +133,16 @@
     dest: /usr/local/bin/jenkins-cli
     mode: 'a+x'
   become: yes
+
+# https://github.com/geerlingguy/ansible-role-jenkins/issues/181
+- name: fix a defect to disable setup wizard
+  jenkins_script:
+    script: |
+      import static jenkins.model.Jenkins.instance as jenkins
+      import jenkins.install.InstallState
+      if (!jenkins.installState.isSetupComplete()) {
+        InstallState.INITIAL_SETUP_COMPLETED.initializeState()
+      }
+    url: "{{ jenkins_url }}"
+    user: "{{ jenkins_admin_username }}"
+    password: "{{ jenkins_admin_password }}"
