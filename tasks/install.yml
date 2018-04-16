@@ -103,9 +103,11 @@
   when: jenkins_ulimit_action is changed or jenkins_initd_patched_1 is changed or jenkins_initd_patched_2 is changed or jenkins_initd_patched_3 is changed
 
 - name: waitfor jenkins 
-  command: curl -s -o /dev/null -w "%{http_code}" {{ jenkins_url }}
-  register: result
-  until: result.stdout == "403" or result.stdout == "200"
+  uri:
+    url: "{{ jenkins_url }}"
+    status_code: "200,403"
+  register: waitfor_jenkins
+  until: waitfor_jenkins is success
   retries: 300
   delay: 1
   changed_when: false

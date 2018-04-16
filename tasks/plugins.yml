@@ -28,7 +28,7 @@
     name: jenkins
     state: restarted
   become: yes
-  when: jenkins_install_plugins | changed
+  when: jenkins_install_plugins is changed
 
 - name: wait_for jenkins
   shell: "curl -D - --silent --max-time 5 {{ jenkins_url }}/cli/"
@@ -36,4 +36,4 @@
   until: (result.stdout.find("403 Forbidden") != -1) or (result.stdout.find("200 OK") != -1) and (result.stdout.find("Please wait while") == -1)
   retries: 60
   delay: 5
-  when: jenkins_install_plugins | changed
+  when: jenkins_install_plugins is changed

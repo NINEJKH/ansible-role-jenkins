@@ -16,12 +16,12 @@
   ignore_errors: yes
 
 - import_tasks: admin.yml
-  when: jenkins_user_anonmyous.rc != 0 or jenkins_user_anonmyous.stdout | search('anonymous')
+  when: jenkins_user_anonmyous.rc != 0 or jenkins_user_anonmyous.stdout is search('anonymous')
 
 - import_tasks: security.yml
 
 - import_tasks: plugins.yml
-  when: jenkins_plugins | length > 0
+  when: jenkins_plugins is length > 0
 
 - import_tasks: configure.yml
 
