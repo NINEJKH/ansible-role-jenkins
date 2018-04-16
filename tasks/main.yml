@@ -21,7 +21,7 @@
 - import_tasks: security.yml
 
 - import_tasks: plugins.yml
-  when: jenkins_plugins is length > 0
+  when: jenkins_plugins | length > 0
 
 - import_tasks: configure.yml
 
