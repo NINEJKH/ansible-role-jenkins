@@ -26,7 +26,7 @@
 
 - name: waitfor jenkins 
   uri:
-    url: "{{ jenkins_url }}"
+    url: "{{ jenkins_url }}/cli/"
     status_code: "200,403"
   register: waitfor_jenkins
   until: waitfor_jenkins is success
