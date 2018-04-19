@@ -10,13 +10,14 @@
   jenkins_plugin:
     name: "{{ item }}"
     # https://github.com/ansible/ansible/issues/24864
-    state: latest
+    state: present
     url_username: "{{ jenkins_admin_username }}"
     url_password: "{{ jenkins_admin_password }}"
     url: "{{ jenkins_url }}"
     with_dependencies: yes
     # seems to be an overall timeout, not a read-timeout
     timeout: 600
+    updates_expiration: 3600
   with_items: "{{ jenkins_plugins }}"
   become: yes
   register: jenkins_install_plugins
