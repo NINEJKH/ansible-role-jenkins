@@ -19,7 +19,6 @@ jenkins_java_args:
   - -Djava.awt.headless=true
   - -Xms{{ jenkins_memory_max }}
   - -Xmx{{ jenkins_memory_max }}
-  - -Djenkins.install.runSetupWizard=false
   # https://www.cloudbees.com/blog/joining-big-leagues-tuning-jenkins-gc-responsiveness-and-stability
   - -XX:+AlwaysPreTouch
   - -XX:+UseG1GC
