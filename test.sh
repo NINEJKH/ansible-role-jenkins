@@ -83,6 +83,7 @@ if [[ -z "${TURBO_MODE}" ]]; then
 fi
 
 if [[ "${CONNECTION}" == "local" ]]; then
+  sleep 10
   curl -sSI "http://${TARGET_HOST}:8080"
   echo ""
   sudo ls -lh /var/lib/jenkins/plugins/
